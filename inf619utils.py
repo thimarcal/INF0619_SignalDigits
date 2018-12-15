@@ -2,12 +2,17 @@
 import os
 import numpy as np
 from random import sample, seed
+from shutil import copyfile
 
 import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = (15,15) # Make the figures a bit bigger
 
 from keras.preprocessing.image import load_img, img_to_array
 from keras.utils import np_utils
+
+from shutil import copyfile
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report, accuracy_score
 
 
 seed(42)
@@ -36,6 +41,24 @@ def splitData(datasetDir='./Dataset', nbClasses=10):
                 test_files[file] = i
     return train_files, val_files, test_files
 
+def createDatasetSplitted(files, dest_path, data_type):
+    dest_path_folder = dest_path+"\\"+data_type  
+    os.makedirs(dest_path_folder, exist_ok=True)
+    print(dest_path_folder)
+    
+    for i in range(10):
+        os.makedirs(dest_path_folder+"\\"+str(i), exist_ok=True)
+        print(dest_path_folder+"\\"+str(i))
+        
+    for file in files:
+        try:
+            file_name = file.split("\\")
+            dest_path2 = dest_path_folder+"\\"+file_name[-2]+"\\"+file_name[-1] 
+            print(file, dest_path2)
+            copyfile(file, dest_path2)
+        except IOError as e:
+            raise
+	
 #plot the images from imgList
 def plotImages(imgListDict):
     for imgPath in imgListDict.keys():
@@ -101,3 +124,33 @@ def loadDatasetInBatches(dataset, batch_size=32, input_shape=(100,100,3), nbClas
             yield np.array(batch), np.array(labelList)
 
     return batch, labelList
+
+from sklearn.metrics import confusion_matrix
+
+def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(10)
+    plt.xticks(tick_marks, rotation=45)
+    plt.yticks(tick_marks)
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+	
+# Compute confusion matrix
+def plot_confusion(yTest, yTestPred, name):
+    cm = confusion_matrix(yTest, yTestPred)
+    np.set_printoptions(precision=2)
+
+    # Normalize the confusion matrix by row (i.e by the number of samples in each class)
+    cm_normalized = (cm.astype('float') / cm.sum(axis=1)[:, np.newaxis])*100
+    print('Classification report')
+    print(classification_report(yTest, yTestPred))
+    print('Normalized confusion matrix')
+    print(cm_normalized)
+    plt.figure(figsize=(5, 5))
+    plot_confusion_matrix(cm_normalized, title='Normalized confusion matrix (%s)' % (name))
+
+    plt.show()
+	
