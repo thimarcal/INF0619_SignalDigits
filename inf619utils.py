@@ -83,12 +83,18 @@ def getLabelFromImgName(imgPath, dataset):
     return dataset.get(imgPath)
     
 #Read our dataset in batches
-def loadDatasetInBatches(dataset, batch_size=32, input_shape=(100,100,3), nbClasses=10):
+def loadDatasetInBatches(dataset, batch_size=32, input_shape=(100,100,3), nbClasses=10, shaffle=True):
     fileNames = dataset
         
     while True:
-        imagePaths = sample(fileNames.keys(), len(fileNames)) #shuffle images in each epoch
-        
+        if shaffle == True:
+            imagePaths = sample(fileNames.keys(), len(fileNames))
+            #print(imagePaths)
+        else:
+            imagePaths = list(fileNames.keys())
+            #print(imagePaths)
+
+			
         batch, labelList = [], []
         nInBatch = 0
         
