@@ -7,7 +7,7 @@ from shutil import copyfile
 import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = (15,15) # Make the figures a bit bigger
 
-from keras.preprocessing.image import load_img, img_to_array
+from keras.preprocessing.image import load_img, img_to_array, ImageDataGenerator
 from keras.utils import np_utils
 
 from shutil import copyfile
@@ -83,7 +83,7 @@ def getLabelFromImgName(imgPath, dataset):
     return dataset.get(imgPath)
     
 #Read our dataset in batches
-def loadDatasetInBatches(dataset, batch_size=32, input_shape=(100,100,3), nbClasses=10, shaffle=True):
+def loadDatasetInBatches(dataset, batch_size=32, input_shape=(100,100,3), nbClasses=10, shouldAugmentData=False, shaffle=True):
     fileNames = dataset
         
     while True:
@@ -110,10 +110,9 @@ def loadDatasetInBatches(dataset, batch_size=32, input_shape=(100,100,3), nbClas
                         ##### you can add more transformations (see https://keras.io/preprocessing/image/)
                         ### We apply a random transformation and add this image (instead of the original)
                         ### to the batch...
-                        
-                        #dataAugmentator = ImageDataGenerator(horizontal_flip = True)
-                        #img = dataAugmentator.random_transform(img)
-                        
+                        if shouldAugmentData:
+                            dataAugmentator = ImageDataGenerator(horizontal_flip = True, rotation_range=20)
+                            img = dataAugmentator.random_transform(img)
                         
                         batch.append(img)
                         labelList.append(label)
