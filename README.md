@@ -4,7 +4,7 @@ Este trabalho de classificação de linguagem de sinais disponivel no Kagle
 
 para rodar os experimentos você deve fazer o download do dataset em:
 
-Repo: github.com/ardamavi/Sign-Language-Digits-Dataset
+github.com/ardamavi/Sign-Language-Digits-Dataset
 
 Depois execute o arquivo: SignalLanguageDigits-Split-Dataset.ipynb
 
